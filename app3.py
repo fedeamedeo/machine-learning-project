@@ -14,15 +14,23 @@ recs_df, items_df, interactions_df = load_data()
 
 # ------------------ GET BOOK COVER ------------------
 @st.cache_data
+@st.cache_data
 def get_cover_image(isbn):
+    if not isbn:
+        return "https://via.placeholder.com/128x195.png?text=No+ISBN"
+    
     try:
         query = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
         response = requests.get(query)
         data = response.json()
-        image_url = data['items'][0]['volumeInfo']['imageLinks']['thumbnail']
-        return image_url
+
+        if "items" in data:
+            return data['items'][0]['volumeInfo']['imageLinks']['thumbnail']
+        else:
+            return "https://via.placeholder.com/128x195.png?text=Not+Found"
     except:
-        return "https://via.placeholder.com/128x195.png?text=No+Cover"
+        return "https://via.placeholder.com/128x195.png?text=Error"
+
 
 # ------------------ MOST POPULAR ------------------
 st.title("📚 Book Recommendation System")
