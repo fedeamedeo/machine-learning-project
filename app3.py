@@ -31,6 +31,7 @@ if st.session_state.favorites:
     cols = st.columns(5)
     for i, (_, row) in enumerate(fav_books.iterrows()):
         with cols[i % 5]:
+            cover = row['cover_url'] if pd.notna(row['cover_url']) and row['cover_url'] != "" else "https://via.placeholder.com/128x195.png?text=No+Cover"
             st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
@@ -45,6 +46,7 @@ popular_books = items_df[items_df['i'].isin(popular_ids)]
 cols = st.columns(5)
 for i, (_, row) in enumerate(popular_books.iterrows()):
     with cols[i % 5]:
+        cover = row['cover_url'] if pd.notna(row['cover_url']) and row['cover_url'] != "" else "https://via.placeholder.com/128x195.png?text=No+Cover"
         st.image(row['cover_url'], width=100)
         st.markdown(f"**{row['Title']}**")
         st.caption(row['Author'])
@@ -69,6 +71,7 @@ if st.button("Show Recommendations"):
         cols = st.columns(5)
         for i, (_, row) in enumerate(recommended_books.iterrows()):
             with cols[i % 5]:
+                cover = row['cover_url'] if pd.notna(row['cover_url']) and row['cover_url'] != "" else "https://via.placeholder.com/128x195.png?text=No+Cover"
                 st.image(row['cover_url'], width=100)
                 st.markdown(f"**{row['Title']}**")
                 st.caption(row['Author'])
@@ -92,6 +95,7 @@ for subject in top_subjects:
     cols = st.columns(5)
     for i, (_, row) in enumerate(subject_books.iterrows()):
         with cols[i % 5]:
+            cover = row['cover_url'] if pd.notna(row['cover_url']) and row['cover_url'] != "" else "https://via.placeholder.com/128x195.png?text=No+Cover"
             st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
