@@ -1,58 +1,41 @@
 import streamlit as st
 import pandas as pd
-import requests
 import os
 
+# ---------- Streamlit Setup ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide")
 st.write("Python version:", os.sys.version)
 
-# ------------------ INIT SESSION STATE ------------------
+# ---------- Session State ----------
 if 'favorites' not in st.session_state:
     st.session_state.favorites = []
 
-# ------------------ LOAD DATA ------------------
+# ---------- Load Data ----------
 @st.cache_data
 def load_data():
     recs = pd.read_csv("tf_idf.csv")
-    items = pd.read_csv("items_improved.csv")
+    items = pd.read_csv("items_improved.csv")  # Now includes 'cover_url'
     interactions = pd.read_csv("interactions_train1.csv")
     return recs, items, interactions
 
 recs_df, items_df, interactions_df = load_data()
 
-# ------------------ GET BOOK COVER ------------------
-@st.cache_data
-def get_cover_image(isbn):
-    if not isbn:
-        return "https://via.placeholder.com/128x195.png?text=No+ISBN"
-    try:
-        query = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
-        response = requests.get(query)
-        data = response.json()
-        if "items" in data:
-            return data['items'][0]['volumeInfo']['imageLinks']['thumbnail']
-        else:
-            return "https://via.placeholder.com/128x195.png?text=Not+Found"
-    except:
-        return "https://via.placeholder.com/128x195.png?text=Error"
-
-# ------------------ FAVORITES SECTION ------------------
+# ---------- Favorites Section ----------
 if st.session_state.favorites:
     st.subheader("⭐ Your Favorite Books")
     fav_books = items_df[items_df['i'].isin(st.session_state.favorites)]
-    clear = st.button("🗑️ Clear Favorites")
-    if clear:
+
+    if st.button("🗑️ Clear Favorites"):
         st.session_state.favorites = []
 
     cols = st.columns(5)
     for i, (_, row) in enumerate(fav_books.iterrows()):
         with cols[i % 5]:
-            isbn = str(row['ISBN Valid']).split(";")[0].strip()
-            st.image(get_cover_image(isbn), width=100)
+            st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
 
-# ------------------ MOST POPULAR ------------------
+# ---------- Most Popular Books ----------
 st.title("📚 Book Recommendation System")
 st.header("🔥 Most Popular Books")
 
@@ -62,15 +45,14 @@ popular_books = items_df[items_df['i'].isin(popular_ids)]
 cols = st.columns(5)
 for i, (_, row) in enumerate(popular_books.iterrows()):
     with cols[i % 5]:
-        isbn = str(row['ISBN Valid']).split(";")[0].strip()
-        st.image(get_cover_image(isbn), width=100)
+        st.image(row['cover_url'], width=100)
         st.markdown(f"**{row['Title']}**")
         st.caption(row['Author'])
         if st.button("❤️ Save", key=f"pop_{row['i']}"):
             if row['i'] not in st.session_state.favorites:
                 st.session_state.favorites.append(row['i'])
 
-# ------------------ PERSONALIZED RECOMMENDATIONS ------------------
+# ---------- Personalized Recommendations ----------
 st.header("🎯 Recommended for You")
 
 user_ids = recs_df['user_id'].unique()
@@ -87,8 +69,7 @@ if st.button("Show Recommendations"):
         cols = st.columns(5)
         for i, (_, row) in enumerate(recommended_books.iterrows()):
             with cols[i % 5]:
-                isbn = str(row['ISBN Valid']).split(";")[0].strip()
-                st.image(get_cover_image(isbn), width=100)
+                st.image(row['cover_url'], width=100)
                 st.markdown(f"**{row['Title']}**")
                 st.caption(row['Author'])
                 if st.button("❤️ Save", key=f"rec_{row['i']}"):
@@ -97,7 +78,7 @@ if st.button("Show Recommendations"):
     else:
         st.warning("No recommendations found for this user.")
 
-# ------------------ BROWSE BY GENRE ------------------
+# ---------- Browse by Genre ----------
 st.header("📚 Browse by Genre")
 
 top_subjects = ["Mangas", "Roman", "Sciences", "Fantasy", "Histoire"]
@@ -111,8 +92,7 @@ for subject in top_subjects:
     cols = st.columns(5)
     for i, (_, row) in enumerate(subject_books.iterrows()):
         with cols[i % 5]:
-            isbn = str(row['ISBN Valid']).split(";")[0].strip()
-            st.image(get_cover_image(isbn), width=100)
+            st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             if st.button("❤️ Save", key=f"genre_{subject}_{row['i']}"):
