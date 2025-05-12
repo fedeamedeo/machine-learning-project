@@ -11,6 +11,19 @@ st.set_page_config(
 # ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide")
 st.write("Python version:", os.sys.version)
+# ---------- SIDEBAR CONTROLS ----------
+st.sidebar.title("🔧 Controls")
+
+lang_code = st.sidebar.selectbox(
+    "🌍 Choose cover image language",
+    options=["en", "fr", "de", "es", "it"],
+    format_func=lambda x: {
+        "en": "English", "fr": "French", "de": "German", "es": "Spanish", "it": "Italian"
+    }[x]
+)
+
+selected_user = st.sidebar.selectbox("👤 Select User ID", sorted(recs_df['user_id'].unique()))
+recommend_btn = st.sidebar.button("🎯 Show Recommendations")
 
 # ---------- SESSION STATE ----------
 if 'favorites' not in st.session_state:
@@ -26,19 +39,7 @@ def load_data():
 
 recs_df, items_df, interactions_df = load_data()
 
-# ---------- SIDEBAR CONTROLS ----------
-st.sidebar.title("🔧 Controls")
 
-lang_code = st.sidebar.selectbox(
-    "🌍 Choose cover image language",
-    options=["en", "fr", "de", "es", "it"],
-    format_func=lambda x: {
-        "en": "English", "fr": "French", "de": "German", "es": "Spanish", "it": "Italian"
-    }[x]
-)
-
-selected_user = st.sidebar.selectbox("👤 Select User ID", sorted(recs_df['user_id'].unique()))
-recommend_btn = st.sidebar.button("🎯 Show Recommendations")
 
 # ---------- COVER FETCH FUNCTION ----------
 @st.cache_data
