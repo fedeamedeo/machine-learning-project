@@ -32,6 +32,7 @@ def get_cover_image(isbn):
         return "https://via.placeholder.com/128x195.png?text=Error"
 
 
+
 # ------------------ MOST POPULAR ------------------
 st.title("📚 Book Recommendation System")
 st.header("🔥 Most Popular Books")
