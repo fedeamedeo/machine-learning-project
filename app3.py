@@ -115,6 +115,6 @@ for subject in top_subjects:
             st.image(get_cover_image(isbn), width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
-            if st.button("❤️ Save", key=f"genre_{row['i']}"):
+            if st.button("❤️ Save", key=f"genre_{subject}_{row['i']}"):
                 if row['i'] not in st.session_state.favorites:
                     st.session_state.favorites.append(row['i'])
