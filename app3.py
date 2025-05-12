@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import requests
-
+import os
+st.write("Python version:", os.sys.version)
 # ------------------ LOAD DATA ------------------
 @st.cache_data
 def load_data():
