@@ -1,9 +1,3 @@
 streamlit
 pandas
-numpy
-scikit-learn
-nltk
-scipy
-csv
-re
 requests
