@@ -7,3 +7,4 @@ scipy
 csv
 re
 requests
+pip install --upgrade pip
