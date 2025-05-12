@@ -2,6 +2,11 @@ import streamlit as st
 import pandas as pd
 import requests
 import os
+st.set_page_config(
+    page_title="📚 Book Recommender",
+    layout="wide",
+    initial_sidebar_state="expanded"  # 👈 this keeps the sidebar open
+)
 
 # ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide")
