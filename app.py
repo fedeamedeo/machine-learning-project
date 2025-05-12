@@ -5,7 +5,7 @@ import pandas as pd
 @st.cache_data
 def load_data():
     recs = pd.read_csv("tf_idf.csv")
-    items = pd.read_csv("items.csv")
+    items = pd.read_csv("items_improved.csv")
     return recs, items
 
 recs_df, items_df = load_data()
