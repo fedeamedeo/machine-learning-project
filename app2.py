@@ -6,7 +6,7 @@ import pandas as pd
 def load_data():
     recs = pd.read_csv("tf_idf.csv")
     items = pd.read_csv("items_improved.csv")
-    interactions = pd.read_csv("interactions_train.csv")
+    interactions = pd.read_csv("interactions_train1.csv")
     return recs, items, interactions
 
 recs_df, items_df, interactions_df = load_data()
