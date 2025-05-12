@@ -21,16 +21,21 @@ def load_data():
 
 recs_df, items_df, interactions_df = load_data()
 
-# ---------- SELECT LANGUAGE ----------
-lang_code = st.selectbox(
-    "Choose a language for book covers:",
+# ---------- SIDEBAR CONTROLS ----------
+st.sidebar.title("🔧 Controls")
+
+lang_code = st.sidebar.selectbox(
+    "🌍 Choose cover image language",
     options=["en", "fr", "de", "es", "it"],
     format_func=lambda x: {
         "en": "English", "fr": "French", "de": "German", "es": "Spanish", "it": "Italian"
     }[x]
 )
 
-# ---------- FETCH COVER IMAGE FROM GOOGLE BOOKS ----------
+selected_user = st.sidebar.selectbox("👤 Select User ID", sorted(recs_df['user_id'].unique()))
+recommend_btn = st.sidebar.button("🎯 Show Recommendations")
+
+# ---------- COVER FETCH FUNCTION ----------
 @st.cache_data
 def get_cover_image_google(isbn, lang='en'):
     if not isbn:
@@ -80,12 +85,8 @@ for i, (_, row) in enumerate(popular_books.iterrows()):
                 st.session_state.favorites.append(row['i'])
 
 # ---------- PERSONALIZED RECOMMENDATIONS ----------
-st.header("🎯 Recommended for You")
-
-user_ids = recs_df['user_id'].unique()
-selected_user = st.selectbox("Select a User ID", sorted(user_ids))
-
-if st.button("Show Recommendations"):
+if recommend_btn:
+    st.header("🎯 Recommended for You")
     user_row = recs_df[recs_df['user_id'] == selected_user]
     if not user_row.empty:
         book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
