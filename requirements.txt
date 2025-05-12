@@ -6,3 +6,4 @@ nltk
 scipy
 csv
 re
+requests
