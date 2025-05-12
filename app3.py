@@ -1,41 +1,67 @@
 import streamlit as st
 import pandas as pd
+import requests
 import os
 
-# ---------- Streamlit Setup ----------
+# ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide")
 st.write("Python version:", os.sys.version)
 
-# ---------- Session State ----------
+# ---------- SESSION STATE ----------
 if 'favorites' not in st.session_state:
     st.session_state.favorites = []
 
-# ---------- Load Data ----------
+# ---------- LOAD DATA ----------
 @st.cache_data
 def load_data():
     recs = pd.read_csv("tf_idf.csv")
-    items = pd.read_csv("items_improved_image.csv")  # Now includes 'cover_url'
+    items = pd.read_csv("items_improved.csv")
     interactions = pd.read_csv("interactions_train1.csv")
     return recs, items, interactions
 
 recs_df, items_df, interactions_df = load_data()
 
-# ---------- Favorites Section ----------
+# ---------- SELECT LANGUAGE ----------
+lang_code = st.selectbox(
+    "Choose a language for book covers:",
+    options=["en", "fr", "de", "es", "it"],
+    format_func=lambda x: {
+        "en": "English", "fr": "French", "de": "German", "es": "Spanish", "it": "Italian"
+    }[x]
+)
+
+# ---------- FETCH COVER IMAGE FROM GOOGLE BOOKS ----------
+@st.cache_data
+def get_cover_image_google(isbn, lang='en'):
+    if not isbn:
+        return "https://via.placeholder.com/128x195.png?text=No+ISBN"
+    try:
+        url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&langRestrict={lang}"
+        response = requests.get(url)
+        data = response.json()
+        if "items" in data and "imageLinks" in data['items'][0]['volumeInfo']:
+            return data['items'][0]['volumeInfo']['imageLinks']['thumbnail']
+        else:
+            return "https://via.placeholder.com/128x195.png?text=Not+Found"
+    except:
+        return "https://via.placeholder.com/128x195.png?text=Error"
+
+# ---------- FAVORITES ----------
 if st.session_state.favorites:
     st.subheader("⭐ Your Favorite Books")
     fav_books = items_df[items_df['i'].isin(st.session_state.favorites)]
-
     if st.button("🗑️ Clear Favorites"):
         st.session_state.favorites = []
 
     cols = st.columns(5)
     for i, (_, row) in enumerate(fav_books.iterrows()):
         with cols[i % 5]:
-            st.image(row['cover_url'], width=100)
+            isbn = str(row['ISBN Valid']).split(";")[0].strip()
+            st.image(get_cover_image_google(isbn, lang=lang_code), width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
 
-# ---------- Most Popular Books ----------
+# ---------- MOST POPULAR ----------
 st.title("📚 Book Recommendation System")
 st.header("🔥 Most Popular Books")
 
@@ -45,14 +71,15 @@ popular_books = items_df[items_df['i'].isin(popular_ids)]
 cols = st.columns(5)
 for i, (_, row) in enumerate(popular_books.iterrows()):
     with cols[i % 5]:
-        st.image(row['cover_url'], width=100)
+        isbn = str(row['ISBN Valid']).split(";")[0].strip()
+        st.image(get_cover_image_google(isbn, lang=lang_code), width=100)
         st.markdown(f"**{row['Title']}**")
         st.caption(row['Author'])
         if st.button("❤️ Save", key=f"pop_{row['i']}"):
             if row['i'] not in st.session_state.favorites:
                 st.session_state.favorites.append(row['i'])
 
-# ---------- Personalized Recommendations ----------
+# ---------- PERSONALIZED RECOMMENDATIONS ----------
 st.header("🎯 Recommended for You")
 
 user_ids = recs_df['user_id'].unique()
@@ -60,7 +87,6 @@ selected_user = st.selectbox("Select a User ID", sorted(user_ids))
 
 if st.button("Show Recommendations"):
     user_row = recs_df[recs_df['user_id'] == selected_user]
-
     if not user_row.empty:
         book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
         recommended_books = items_df[items_df['i'].isin(book_ids)]
@@ -69,7 +95,8 @@ if st.button("Show Recommendations"):
         cols = st.columns(5)
         for i, (_, row) in enumerate(recommended_books.iterrows()):
             with cols[i % 5]:
-                st.image(row['cover_url'], width=100)
+                isbn = str(row['ISBN Valid']).split(";")[0].strip()
+                st.image(get_cover_image_google(isbn, lang=lang_code), width=100)
                 st.markdown(f"**{row['Title']}**")
                 st.caption(row['Author'])
                 if st.button("❤️ Save", key=f"rec_{row['i']}"):
@@ -78,7 +105,7 @@ if st.button("Show Recommendations"):
     else:
         st.warning("No recommendations found for this user.")
 
-# ---------- Browse by Genre ----------
+# ---------- BROWSE BY GENRE ----------
 st.header("📚 Browse by Genre")
 
 top_subjects = ["Mangas", "Roman", "Sciences", "Fantasy", "Histoire"]
@@ -92,7 +119,8 @@ for subject in top_subjects:
     cols = st.columns(5)
     for i, (_, row) in enumerate(subject_books.iterrows()):
         with cols[i % 5]:
-            st.image(row['cover_url'], width=100)
+            isbn = str(row['ISBN Valid']).split(";")[0].strip()
+            st.image(get_cover_image_google(isbn, lang=lang_code), width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             if st.button("❤️ Save", key=f"genre_{subject}_{row['i']}"):
