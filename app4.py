@@ -80,3 +80,5 @@ if prompt := st.chat_input("What kind of book are you looking for?"):
                 st.caption(book['author'])
 
     st.session_state.messages.append({"role": "assistant", "content": assistant_msg, "books": books_info})
+
+    
