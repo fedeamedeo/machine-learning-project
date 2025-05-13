@@ -28,6 +28,26 @@ st.sidebar.title("🔧 Settings")
 st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
 st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0, key="user_select")
 
+if st.sidebar.button("Show Recommendations", key="sidebar_show_recs"):
+    user_row = recs_df[recs_df['user_id'] == st.session_state.selected_user]
+
+    if not user_row.empty:
+        book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
+        recommended_books = items_df[items_df['i'].isin(book_ids)]
+
+        st.subheader("📖 Top Book Picks for You")
+        cols = st.columns(5)
+        for i, (_, row) in enumerate(recommended_books.iterrows()):
+            with cols[i % 5]:
+                st.image(row['cover_url'], width=100)
+                st.markdown(f"**{row['Title']}**")
+                st.caption(row['Author'])
+                if st.button("❤️ Save", key=f"rec_{row['i']}"):
+                    if row['i'] not in st.session_state.favorites:
+                        st.session_state.favorites.append(row['i'])
+    else:
+        st.warning("No recommendations found for this user.")
+
 # ---------- SEARCH BAR ----------
 st.title("🔍 Search the Book Database")
 search_query = st.text_input("Search for a book by title, author, or subject:")
@@ -76,29 +96,6 @@ for i, (_, row) in enumerate(popular_books.iterrows()):
         if st.button("❤️ Save", key=f"pop_{row['i']}"):
             if row['i'] not in st.session_state.favorites:
                 st.session_state.favorites.append(row['i'])
-
-# ------------------ PERSONALIZED RECOMMENDATIONS ------------------
-st.header("🎯 Recommended for You")
-
-if st.button("Show Recommendations"):
-    user_row = recs_df[recs_df['user_id'] == st.session_state.selected_user]
-
-    if not user_row.empty:
-        book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
-        recommended_books = items_df[items_df['i'].isin(book_ids)]
-
-        st.subheader("📖 Top Book Picks for You")
-        cols = st.columns(5)
-        for i, (_, row) in enumerate(recommended_books.iterrows()):
-            with cols[i % 5]:
-                st.image(row['cover_url'], width=100)
-                st.markdown(f"**{row['Title']}**")
-                st.caption(row['Author'])
-                if st.button("❤️ Save", key=f"rec_{row['i']}"):
-                    if row['i'] not in st.session_state.favorites:
-                        st.session_state.favorites.append(row['i'])
-    else:
-        st.warning("No recommendations found for this user.")
 
 # ------------------ BROWSE BY GENRE ------------------
 st.header("📚 Browse by Genre")
