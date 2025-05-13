@@ -29,6 +29,23 @@ def load_data():
     return recs, items, interactions
 
 recs_df, items_df, interactions_df = load_data()
+# ---------- SEARCH BAR ----------
+st.title("🔍 Search the Book Database")
+search_query = st.text_input("Search for a book by title, author, or subject:")
+if search_query:
+    results = items_df[
+        items_df['Title'].str.lower().str.contains(search_query.lower(), na=False) |
+        items_df['Author'].str.lower().str.contains(search_query.lower(), na=False) |
+        items_df['Subjects'].str.lower().str.contains(search_query.lower(), na=False)
+    ]
+    st.subheader(f"Found {len(results)} result(s):")
+    cols = st.columns(5)
+    for i, (_, row) in enumerate(results.head(15).iterrows()):
+        with cols[i % 5]:
+            st.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
+            st.markdown(f"**{row['Title']}**")
+            st.caption(row['Author'])
+
 
 # ------------------ FAVORITES SECTION ------------------
 if st.session_state.favorites:
