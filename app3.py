@@ -27,16 +27,28 @@ recs_df, items_df, interactions_df = load_data()
 st.sidebar.title("🔧 Settings")
 st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
 st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0)
-if st.sidebar.button("Show Recommendations"):
-    user_row = recs_df[recs_df['user_id'] == st.session_state.selected_user]
+user_ids = recs_df['user_id'].unique()
+selected_user = st.selectbox("Select a User ID", sorted(user_ids))
+
+if st.button("Show Recommendations"):
+    user_row = recs_df[recs_df['user_id'] == selected_user]
+
     if not user_row.empty:
         book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
-        rec_books = items_df[items_df['i'].isin(book_ids)]
-        st.sidebar.subheader("Your Recommendations")
-        for _, row in rec_books.head(5).iterrows():
-            st.sidebar.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
-            st.sidebar.markdown(f"**{row['Title']}**")
-            st.sidebar.caption(row['Author'])
+        recommended_books = items_df[items_df['i'].isin(book_ids)]
+
+        st.subheader("📖 Top Book Picks for You")
+        cols = st.columns(5)
+        for i, (_, row) in enumerate(recommended_books.iterrows()):
+            with cols[i % 5]:
+                st.image(row['cover_url'], width=100)
+                st.markdown(f"**{row['Title']}**")
+                st.caption(row['Author'])
+                if st.button("❤️ Save", key=f"rec_{row['i']}"):
+                    if row['i'] not in st.session_state.favorites:
+                        st.session_state.favorites.append(row['i'])
+    else:
+        st.warning("No recommendations found for this user.")
 # ------------------ SEARCH BAR ------------------
 
 
