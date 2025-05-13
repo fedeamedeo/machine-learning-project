@@ -37,6 +37,7 @@ if st.sidebar.button("Show Recommendations"):
             st.sidebar.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
             st.sidebar.markdown(f"**{row['Title']}**")
             st.sidebar.caption(row['Author'])
+# ------------------ SEARCH BAR ------------------
 
 
 
