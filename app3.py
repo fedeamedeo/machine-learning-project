@@ -5,16 +5,7 @@ import os
 # ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide", initial_sidebar_state="expanded")
 
-'''# ---------- LOAD DATA ----------
-@st.cache_data
-def load_data():
-    recs = pd.read_csv("tf_idf.csv")
-    items = pd.read_csv("items_improved.csv")
-    interactions = pd.read_csv("interactions_train1.csv")
-    #rec_lookup = pd.read_csv("tfidf_recommendations.csv")
-    return recs, items, interactions, rec_lookup
 
-recs_df, items_df, interactions_df, rec_lookup = load_data()'''
 
 # ---------- SESSION STATE ----------
 if "messages" not in st.session_state:
