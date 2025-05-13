@@ -16,6 +16,7 @@ if "favorites" not in st.session_state:
 # ---------- SIDEBAR ----------
 st.sidebar.title("🔧 Settings")
 st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
+st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0)
 
 
 
