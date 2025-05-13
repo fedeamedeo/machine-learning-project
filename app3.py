@@ -147,4 +147,3 @@ for subject in top_subjects:
             if st.button("❤️ Save", key=f"genre_{row['i']}"):
                 if row['i'] not in st.session_state.favorites:
                     st.session_state.favorites.append(row['i'])
-                    
