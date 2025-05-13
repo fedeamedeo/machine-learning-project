@@ -32,7 +32,7 @@ if st.sidebar.button("Show Recommendations", key="sidebar_show_recs"):
     user_row = recs_df[recs_df['user_id'] == st.session_state.selected_user]
 
     if not user_row.empty:
-        book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
+        book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))[:10]
         recommended_books = items_df[items_df['i'].isin(book_ids)]
 
         st.subheader("📖 Top Book Picks for You")
