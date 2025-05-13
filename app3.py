@@ -41,7 +41,11 @@ if st.sidebar.button("Show Recommendations", key="sidebar_show_recs"):
             interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
             with cols[i % 5]:
                 st.image(row['cover_url'], width=100)
-                st.markdown(f"**{row['Title']}**")
+                link = row.get('link', None)
+                if link:
+                    st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"**{row['Title']}**")
                 st.caption(row['Author'])
                 st.caption(f"👥 {interactions_count} interactions")
                 if st.button("❤️ Save", key=f"rec_{row['i']}"):
@@ -65,7 +69,11 @@ if search_query:
         interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
-            st.markdown(f"**{row['Title']}**")
+            link = row.get('link', None)
+            if link:
+                st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
+            else:
+                st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             st.caption(f"👥 {interactions_count} interactions")
 
@@ -82,7 +90,11 @@ if st.session_state.favorites:
         interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row['cover_url'], width=100)
-            st.markdown(f"**{row['Title']}**")
+            link = row.get('link', None)
+            if link:
+                st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
+            else:
+                st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             st.caption(f"👥 {interactions_count} interactions")
 
@@ -98,7 +110,11 @@ for i, (_, row) in enumerate(popular_books.iterrows()):
     interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
     with cols[i % 5]:
         st.image(row['cover_url'], width=100)
-        st.markdown(f"**{row['Title']}**")
+        link = row.get('link', None)
+        if link:
+            st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
+        else:
+            st.markdown(f"**{row['Title']}**")
         st.caption(row['Author'])
         st.caption(f"👥 {interactions_count} interactions")
         if st.button("❤️ Save", key=f"pop_{row['i']}"):
@@ -121,7 +137,11 @@ for subject in top_subjects:
         interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row['cover_url'], width=100)
-            st.markdown(f"**{row['Title']}**")
+            link = row.get('link', None)
+            if link:
+                st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
+            else:
+                st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             st.caption(f"👥 {interactions_count} interactions")
             if st.button("❤️ Save", key=f"genre_{row['i']}"):
