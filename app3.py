@@ -13,14 +13,6 @@ if "messages" not in st.session_state:
 if "favorites" not in st.session_state:
     st.session_state.favorites = []
 
-# ---------- SIDEBAR ----------
-st.sidebar.title("🔧 Settings")
-st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
-st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0)
-
-
-
-
 # ------------------ LOAD DATA ------------------
 @st.cache_data
 def load_data():
@@ -30,6 +22,16 @@ def load_data():
     return recs, items, interactions
 
 recs_df, items_df, interactions_df = load_data()
+
+# ---------- SIDEBAR ----------
+st.sidebar.title("🔧 Settings")
+st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
+st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0)
+
+
+
+
+
 # ---------- SEARCH BAR ----------
 st.title("🔍 Search the Book Database")
 search_query = st.text_input("Search for a book by title, author, or subject:")
