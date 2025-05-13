@@ -5,7 +5,7 @@ import os
 # ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide", initial_sidebar_state="expanded")
 
-# ---------- LOAD DATA ----------
+'''# ---------- LOAD DATA ----------
 @st.cache_data
 def load_data():
     recs = pd.read_csv("tf_idf.csv")
@@ -14,7 +14,7 @@ def load_data():
     #rec_lookup = pd.read_csv("tfidf_recommendations.csv")
     return recs, items, interactions, rec_lookup
 
-recs_df, items_df, interactions_df, rec_lookup = load_data()
+recs_df, items_df, interactions_df, rec_lookup = load_data()'''
 
 # ---------- SESSION STATE ----------
 if "messages" not in st.session_state:
@@ -30,7 +30,7 @@ st.sidebar.markdown("Chat with the system to get personalized book recommendatio
 
 '''# ------------------ INIT SESSION STATE ------------------
 if 'favorites' not in st.session_state:
-    st.session_state.favorites = []
+    st.session_state.favorites = []'''
 
 # ------------------ LOAD DATA ------------------
 @st.cache_data
@@ -40,7 +40,7 @@ def load_data():
     interactions = pd.read_csv("interactions_train1.csv")
     return recs, items, interactions
 
-recs_df, items_df, interactions_df = load_data()'''
+recs_df, items_df, interactions_df = load_data()
 
 # ------------------ FAVORITES SECTION ------------------
 if st.session_state.favorites:
