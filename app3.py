@@ -5,13 +5,13 @@ import os
 # ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide", initial_sidebar_state="expanded")
 
-
-
 # ---------- SESSION STATE ----------
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "favorites" not in st.session_state:
     st.session_state.favorites = []
+if "selected_user" not in st.session_state:
+    st.session_state.selected_user = None
 
 # ------------------ LOAD DATA ------------------
 @st.cache_data
@@ -26,10 +26,7 @@ recs_df, items_df, interactions_df = load_data()
 # ---------- SIDEBAR ----------
 st.sidebar.title("🔧 Settings")
 st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
-st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0)
-
-
-
+st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0, key="user_select")
 
 # ---------- SEARCH BAR ----------
 st.title("🔍 Search the Book Database")
@@ -47,7 +44,6 @@ if search_query:
             st.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
-
 
 # ------------------ FAVORITES SECTION ------------------
 if st.session_state.favorites:
@@ -84,11 +80,8 @@ for i, (_, row) in enumerate(popular_books.iterrows()):
 # ------------------ PERSONALIZED RECOMMENDATIONS ------------------
 st.header("🎯 Recommended for You")
 
-user_ids = recs_df['user_id'].unique()
-selected_user = st.selectbox("Select a User ID", sorted(user_ids))
-
 if st.button("Show Recommendations"):
-    user_row = recs_df[recs_df['user_id'] == selected_user]
+    user_row = recs_df[recs_df['user_id'] == st.session_state.selected_user]
 
     if not user_row.empty:
         book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
@@ -127,4 +120,3 @@ for subject in top_subjects:
             if st.button("❤️ Save", key=f"genre_{row['i']}"):
                 if row['i'] not in st.session_state.favorites:
                     st.session_state.favorites.append(row['i'])
-# ------------------ FOOTER ------------------
