@@ -27,7 +27,7 @@ recs_df, items_df, interactions_df = load_data()
 st.sidebar.title("🔧 Settings")
 st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
 st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0)
-user_ids = recs_df['user_id'].unique()
+'''user_ids = recs_df['user_id'].unique()
 selected_user = st.selectbox("Select a User ID", sorted(user_ids))
 
 if st.button("Show Recommendations"):
@@ -48,7 +48,7 @@ if st.button("Show Recommendations"):
                     if row['i'] not in st.session_state.favorites:
                         st.session_state.favorites.append(row['i'])
     else:
-        st.warning("No recommendations found for this user.")
+        st.warning("No recommendations found for this user.")'''
 
 
 
@@ -105,7 +105,7 @@ for i, (_, row) in enumerate(popular_books.iterrows()):
 # ------------------ PERSONALIZED RECOMMENDATIONS ------------------
 st.header("🎯 Recommended for You")
 
-'''user_ids = recs_df['user_id'].unique()
+user_ids = recs_df['user_id'].unique()
 selected_user = st.selectbox("Select a User ID", sorted(user_ids))
 
 if st.button("Show Recommendations"):
@@ -126,7 +126,7 @@ if st.button("Show Recommendations"):
                     if row['i'] not in st.session_state.favorites:
                         st.session_state.favorites.append(row['i'])
     else:
-        st.warning("No recommendations found for this user.")'''
+        st.warning("No recommendations found for this user.")
 
 # ------------------ BROWSE BY GENRE ------------------
 st.header("📚 Browse by Genre")
