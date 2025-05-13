@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import webbrowser
 
 # ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Book Recommender", layout="wide", initial_sidebar_state="expanded")
@@ -41,13 +42,11 @@ if st.sidebar.button("Show Recommendations", key="sidebar_show_recs"):
             interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
             with cols[i % 5]:
                 st.image(row['cover_url'], width=100)
-                link = row.get('link', None)
-                if link:
-                    st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"**{row['Title']}**")
+                st.markdown(f"**{row['Title']}**")
                 st.caption(row['Author'])
                 st.caption(f"👥 {interactions_count} interactions")
+                if row.get('link'):
+                    st.link_button("🔗 Open Link", row['link'], use_container_width=True)
                 if st.button("❤️ Save", key=f"rec_{row['i']}"):
                     if row['i'] not in st.session_state.favorites:
                         st.session_state.favorites.append(row['i'])
@@ -69,13 +68,11 @@ if search_query:
         interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
-            link = row.get('link', None)
-            if link:
-                st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
-            else:
-                st.markdown(f"**{row['Title']}**")
+            st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             st.caption(f"👥 {interactions_count} interactions")
+            if row.get('link'):
+                st.link_button("🔗 Open Link", row['link'], use_container_width=True)
 
 # ------------------ FAVORITES SECTION ------------------
 if st.session_state.favorites:
@@ -90,13 +87,11 @@ if st.session_state.favorites:
         interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row['cover_url'], width=100)
-            link = row.get('link', None)
-            if link:
-                st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
-            else:
-                st.markdown(f"**{row['Title']}**")
+            st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             st.caption(f"👥 {interactions_count} interactions")
+            if row.get('link'):
+                st.link_button("🔗 Open Link", row['link'], use_container_width=True)
 
 # ------------------ MOST POPULAR ------------------
 st.title("📚 Book Recommendation System")
@@ -110,13 +105,11 @@ for i, (_, row) in enumerate(popular_books.iterrows()):
     interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
     with cols[i % 5]:
         st.image(row['cover_url'], width=100)
-        link = row.get('link', None)
-        if link:
-            st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
-        else:
-            st.markdown(f"**{row['Title']}**")
+        st.markdown(f"**{row['Title']}**")
         st.caption(row['Author'])
         st.caption(f"👥 {interactions_count} interactions")
+        if row.get('link'):
+            st.link_button("🔗 Open Link", row['link'], use_container_width=True)
         if st.button("❤️ Save", key=f"pop_{row['i']}"):
             if row['i'] not in st.session_state.favorites:
                 st.session_state.favorites.append(row['i'])
@@ -137,13 +130,11 @@ for subject in top_subjects:
         interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row['cover_url'], width=100)
-            link = row.get('link', None)
-            if link:
-                st.markdown(f"[{row['Title']}]({link})", unsafe_allow_html=True)
-            else:
-                st.markdown(f"**{row['Title']}**")
+            st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             st.caption(f"👥 {interactions_count} interactions")
+            if row.get('link'):
+                st.link_button("🔗 Open Link", row['link'], use_container_width=True)
             if st.button("❤️ Save", key=f"genre_{row['i']}"):
                 if row['i'] not in st.session_state.favorites:
                     st.session_state.favorites.append(row['i'])
