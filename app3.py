@@ -62,10 +62,12 @@ if search_query:
     st.subheader(f"Found {len(results)} result(s):")
     cols = st.columns(5)
     for i, (_, row) in enumerate(results.head(15).iterrows()):
+        interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
+            st.caption(f"👥 {interactions_count} interactions")
 
 # ------------------ FAVORITES SECTION ------------------
 if st.session_state.favorites:
@@ -77,10 +79,12 @@ if st.session_state.favorites:
 
     cols = st.columns(5)
     for i, (_, row) in enumerate(fav_books.iterrows()):
+        interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
+            st.caption(f"👥 {interactions_count} interactions")
 
 # ------------------ MOST POPULAR ------------------
 st.title("📚 Book Recommendation System")
@@ -91,10 +95,12 @@ popular_books = items_df[items_df['i'].isin(popular_ids)]
 
 cols = st.columns(5)
 for i, (_, row) in enumerate(popular_books.iterrows()):
+    interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
     with cols[i % 5]:
         st.image(row['cover_url'], width=100)
         st.markdown(f"**{row['Title']}**")
         st.caption(row['Author'])
+        st.caption(f"👥 {interactions_count} interactions")
         if st.button("❤️ Save", key=f"pop_{row['i']}"):
             if row['i'] not in st.session_state.favorites:
                 st.session_state.favorites.append(row['i'])
@@ -112,10 +118,12 @@ for subject in top_subjects:
 
     cols = st.columns(5)
     for i, (_, row) in enumerate(subject_books.iterrows()):
+        interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
         with cols[i % 5]:
             st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
+            st.caption(f"👥 {interactions_count} interactions")
             if st.button("❤️ Save", key=f"genre_{row['i']}"):
                 if row['i'] not in st.session_state.favorites:
                     st.session_state.favorites.append(row['i'])
