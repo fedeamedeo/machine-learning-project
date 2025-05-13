@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import requests
 import os
 
 st.set_page_config(page_title="📚 Book Recommender", layout="wide")
@@ -20,22 +19,6 @@ def load_data():
 
 recs_df, items_df, interactions_df = load_data()
 
-# ------------------ GET BOOK COVER ------------------
-@st.cache_data
-def get_cover_image(isbn):
-    if not isbn:
-        return "https://via.placeholder.com/128x195.png?text=No+ISBN"
-    try:
-        query = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
-        response = requests.get(query)
-        data = response.json()
-        if "items" in data:
-            return data['items'][0]['volumeInfo']['imageLinks']['thumbnail']
-        else:
-            return "https://via.placeholder.com/128x195.png?text=Not+Found"
-    except:
-        return "https://via.placeholder.com/128x195.png?text=Error"
-
 # ------------------ FAVORITES SECTION ------------------
 if st.session_state.favorites:
     st.subheader("⭐ Your Favorite Books")
@@ -47,8 +30,7 @@ if st.session_state.favorites:
     cols = st.columns(5)
     for i, (_, row) in enumerate(fav_books.iterrows()):
         with cols[i % 5]:
-            isbn = str(row['ISBN Valid']).split(";")[0].strip()
-            st.image(get_cover_image(isbn), width=100)
+            st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
 
@@ -62,8 +44,7 @@ popular_books = items_df[items_df['i'].isin(popular_ids)]
 cols = st.columns(5)
 for i, (_, row) in enumerate(popular_books.iterrows()):
     with cols[i % 5]:
-        isbn = str(row['ISBN Valid']).split(";")[0].strip()
-        st.image(get_cover_image(isbn), width=100)
+        st.image(row['cover_url'], width=100)
         st.markdown(f"**{row['Title']}**")
         st.caption(row['Author'])
         if st.button("❤️ Save", key=f"pop_{row['i']}"):
@@ -87,8 +68,7 @@ if st.button("Show Recommendations"):
         cols = st.columns(5)
         for i, (_, row) in enumerate(recommended_books.iterrows()):
             with cols[i % 5]:
-                isbn = str(row['ISBN Valid']).split(";")[0].strip()
-                st.image(get_cover_image(isbn), width=100)
+                st.image(row['cover_url'], width=100)
                 st.markdown(f"**{row['Title']}**")
                 st.caption(row['Author'])
                 if st.button("❤️ Save", key=f"rec_{row['i']}"):
@@ -111,8 +91,7 @@ for subject in top_subjects:
     cols = st.columns(5)
     for i, (_, row) in enumerate(subject_books.iterrows()):
         with cols[i % 5]:
-            isbn = str(row['ISBN Valid']).split(";")[0].strip()
-            st.image(get_cover_image(isbn), width=100)
+            st.image(row['cover_url'], width=100)
             st.markdown(f"**{row['Title']}**")
             st.caption(row['Author'])
             if st.button("❤️ Save", key=f"genre_{row['i']}"):
