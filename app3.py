@@ -2,10 +2,33 @@ import streamlit as st
 import pandas as pd
 import os
 
-st.set_page_config(page_title="📚 Book Recommender", layout="wide")
-st.write("Python version:", os.sys.version)
+# ---------- CONFIG ----------
+st.set_page_config(page_title="📚 Book Recommender", layout="wide", initial_sidebar_state="expanded")
 
-# ------------------ INIT SESSION STATE ------------------
+# ---------- LOAD DATA ----------
+@st.cache_data
+def load_data():
+    recs = pd.read_csv("tf_idf.csv")
+    items = pd.read_csv("items_improved.csv")
+    interactions = pd.read_csv("interactions_train1.csv")
+    rec_lookup = pd.read_csv("tfidf_recommendations.csv")
+    return recs, items, interactions, rec_lookup
+
+recs_df, items_df, interactions_df, rec_lookup = load_data()
+
+# ---------- SESSION STATE ----------
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "favorites" not in st.session_state:
+    st.session_state.favorites = []
+
+# ---------- SIDEBAR ----------
+st.sidebar.title("🔧 Settings")
+st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
+
+
+
+'''# ------------------ INIT SESSION STATE ------------------
 if 'favorites' not in st.session_state:
     st.session_state.favorites = []
 
@@ -17,7 +40,7 @@ def load_data():
     interactions = pd.read_csv("interactions_train1.csv")
     return recs, items, interactions
 
-recs_df, items_df, interactions_df = load_data()
+recs_df, items_df, interactions_df = load_data()'''
 
 # ------------------ FAVORITES SECTION ------------------
 if st.session_state.favorites:
