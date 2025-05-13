@@ -49,7 +49,6 @@ if st.button("Show Recommendations"):
                         st.session_state.favorites.append(row['i'])
     else:
         st.warning("No recommendations found for this user.")
-# ------------------ SEARCH BAR ------------------
 
 
 
@@ -106,7 +105,7 @@ for i, (_, row) in enumerate(popular_books.iterrows()):
 # ------------------ PERSONALIZED RECOMMENDATIONS ------------------
 st.header("🎯 Recommended for You")
 
-user_ids = recs_df['user_id'].unique()
+'''user_ids = recs_df['user_id'].unique()
 selected_user = st.selectbox("Select a User ID", sorted(user_ids))
 
 if st.button("Show Recommendations"):
@@ -127,7 +126,7 @@ if st.button("Show Recommendations"):
                     if row['i'] not in st.session_state.favorites:
                         st.session_state.favorites.append(row['i'])
     else:
-        st.warning("No recommendations found for this user.")
+        st.warning("No recommendations found for this user.")'''
 
 # ------------------ BROWSE BY GENRE ------------------
 st.header("📚 Browse by Genre")
