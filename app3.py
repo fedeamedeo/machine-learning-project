@@ -19,9 +19,6 @@ st.sidebar.markdown("Chat with the system to get personalized book recommendatio
 
 
 
-'''# ------------------ INIT SESSION STATE ------------------
-if 'favorites' not in st.session_state:
-    st.session_state.favorites = []'''
 
 # ------------------ LOAD DATA ------------------
 @st.cache_data
