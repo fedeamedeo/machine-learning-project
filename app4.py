@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import random
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 # ---------- CONFIG ----------
 st.set_page_config(page_title="📚 Chat-Style Book Recommender", layout="wide", initial_sidebar_state="expanded")
@@ -12,20 +10,12 @@ st.set_page_config(page_title="📚 Chat-Style Book Recommender", layout="wide",
 @st.cache_data
 def load_data():
     recs = pd.read_csv("tf_idf.csv")
-    items = pd.read_csv("items_improved_image2.csv")
+    items = pd.read_csv("items_improved.csv")
     interactions = pd.read_csv("interactions_train1.csv")
-    return recs, items, interactions
+    rec_lookup = pd.read_csv("tfidf_recommendations.csv")
+    return recs, items, interactions, rec_lookup
 
-recs_df, items_df, interactions_df = load_data()
-
-# ---------- TF-IDF SETUP ----------
-@st.cache_data
-def compute_tfidf_matrix(items):
-    vectorizer = TfidfVectorizer(stop_words='english', max_features=10000)
-    tfidf_matrix = vectorizer.fit_transform(items['content'].fillna(""))
-    return vectorizer, tfidf_matrix
-
-vectorizer, tfidf_matrix = compute_tfidf_matrix(items_df)
+recs_df, items_df, interactions_df, rec_lookup = load_data()
 
 # ---------- SESSION STATE ----------
 if "messages" not in st.session_state:
@@ -35,7 +25,7 @@ if "favorites" not in st.session_state:
 
 # ---------- SIDEBAR ----------
 st.sidebar.title("🔧 Settings")
-st.sidebar.markdown("Chat with the system to get personalized book recommendations based on content similarity.")
+st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
 
 # ---------- CHAT INTERFACE ----------
 st.title("💬 Book Chat Recommender")
@@ -55,11 +45,23 @@ if prompt := st.chat_input("What kind of book are you looking for?"):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Vectorize user query and compute cosine similarity
-    query_vec = vectorizer.transform([prompt])
-    similarity = cosine_similarity(query_vec, tfidf_matrix).flatten()
-    top_indices = similarity.argsort()[-5:][::-1]
-    recommended_books = items_df.iloc[top_indices]
+    # Match query to book metadata
+    matched = items_df[
+        items_df['Title'].str.lower().str.contains(prompt.lower(), na=False) |
+        items_df['Subjects'].str.lower().str.contains(prompt.lower(), na=False)
+    ]
+
+    if matched.empty:
+        recommended_books = items_df.sample(5)
+    else:
+        best_match_id = matched.iloc[0]['i']
+        rec_row = rec_lookup[rec_lookup['i'] == best_match_id]
+
+        if not rec_row.empty:
+            rec_ids = list(map(int, rec_row.iloc[0]['tfidf_recs'].split()))
+            recommended_books = items_df[items_df['i'].isin(rec_ids)].head(5)
+        else:
+            recommended_books = matched.head(5)
 
     books_info = []
     for _, row in recommended_books.iterrows():
@@ -80,5 +82,3 @@ if prompt := st.chat_input("What kind of book are you looking for?"):
                 st.caption(book['author'])
 
     st.session_state.messages.append({"role": "assistant", "content": assistant_msg, "books": books_info})
-
-    
