@@ -38,10 +38,12 @@ if st.sidebar.button("Show Recommendations", key="sidebar_show_recs"):
         st.subheader("📖 Top Book Picks for You")
         cols = st.columns(5)
         for i, (_, row) in enumerate(recommended_books.iterrows()):
+            interactions_count = interactions_df[interactions_df['i'] == row['i']].shape[0]
             with cols[i % 5]:
                 st.image(row['cover_url'], width=100)
                 st.markdown(f"**{row['Title']}**")
                 st.caption(row['Author'])
+                st.caption(f"👥 {interactions_count} interactions")
                 if st.button("❤️ Save", key=f"rec_{row['i']}"):
                     if row['i'] not in st.session_state.favorites:
                         st.session_state.favorites.append(row['i'])
