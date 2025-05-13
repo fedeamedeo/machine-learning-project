@@ -26,9 +26,17 @@ recs_df, items_df, interactions_df = load_data()
 # ---------- SIDEBAR ----------
 st.sidebar.title("🔧 Settings")
 st.sidebar.markdown("Chat with the system to get personalized book recommendations using precomputed TF-IDF matches.")
-st.session_state.selected_user = st.sidebar.selectbox("Select your Libray User number", recs_df['user_id'].unique(), index=0)
-
-
+st.session_state.selected_user = st.sidebar.selectbox("Select a User ID", recs_df['user_id'].unique(), index=0)
+if st.sidebar.button("Show Recommendations"):
+    user_row = recs_df[recs_df['user_id'] == st.session_state.selected_user]
+    if not user_row.empty:
+        book_ids = list(map(int, user_row.iloc[0]['recommendation'].split()))
+        rec_books = items_df[items_df['i'].isin(book_ids)]
+        st.sidebar.subheader("Your Recommendations")
+        for _, row in rec_books.head(5).iterrows():
+            st.sidebar.image(row.get('cover_url', "https://via.placeholder.com/128x195.png?text=No+Image"), width=100)
+            st.sidebar.markdown(f"**{row['Title']}**")
+            st.sidebar.caption(row['Author'])
 
 
 
