@@ -33,7 +33,7 @@ if 'favorites' not in st.session_state:
 @st.cache_data
 def load_data():
     recs = pd.read_csv("tf_idf.csv")
-    items = pd.read_csv("items_enriched_openlibrary.csv")
+    items = pd.read_csv("items_improved_image.csv")
     interactions = pd.read_csv("interactions_train1.csv")
     return recs, items, interactions
 
