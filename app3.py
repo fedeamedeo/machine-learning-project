@@ -56,9 +56,23 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("📖 Pick a Book Title")
 book_titles = items_df['Title'].dropna().unique()
 selected_book = st.sidebar.selectbox("Type or select a book from the dropdown", sorted(book_titles), key="book_select")
+if selected_book:
+    book_info = items_df[items_df['Title'] == selected_book].iloc[0]
+    interactions_count = interactions_df[interactions_df['i'] == book_info['i']].shape[0]
 
+    st.image(book_info['cover_url'], width=150)
+    st.markdown(f"**{book_info['Title']}**")
+    st.caption(book_info['Author'])
+    st.caption(f"👥 {interactions_count} interactions")
+
+    if book_info.get('link'):
+        st.markdown(f"[🔗 Open Link]({book_info['link']})", unsafe_allow_html=True)
+
+    if st.button("❤️ Save to Favorites", key=f"select_{book_info['i']}"):
+        if book_info['i'] not in st.session_state.favorites:
+            st.session_state.favorites.append(book_info['i'])
         # ---------- SELECT BOOK FROM DROPDOWN ----------
-st.subheader("🎬 Pick a Book Title")
+'''st.subheader("🎬 Pick a Book Title")
 
 book_titles = items_df['Title'].dropna().unique()
 selected_book = st.selectbox("Type or select a book from the dropdown", sorted(book_titles))
@@ -77,7 +91,7 @@ if selected_book:
 
     if st.button("❤️ Save to Favorites", key=f"select_{book_info['i']}"):
         if book_info['i'] not in st.session_state.favorites:
-            st.session_state.favorites.append(book_info['i'])
+            st.session_state.favorites.append(book_info['i'])'''
 
 
 # ---------- SEARCH BAR ----------
