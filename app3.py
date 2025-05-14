@@ -52,6 +52,11 @@ if st.sidebar.button("Show Recommendations", key="sidebar_show_recs"):
                         st.session_state.favorites.append(row['i'])
     else:
         st.warning("No recommendations found for this user.")
+st.sidebar.markdown("---")
+st.sidebar.subheader("📖 Pick a Book Title")
+book_titles = items_df['Title'].dropna().unique()
+selected_book = st.sidebar.selectbox("Type or select a book from the dropdown", sorted(book_titles), key="book_select")
+
         # ---------- SELECT BOOK FROM DROPDOWN ----------
 st.subheader("🎬 Pick a Book Title")
 
