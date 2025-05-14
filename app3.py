@@ -94,6 +94,7 @@ if selected_book:
             st.session_state.favorites.append(book_info['i'])'''
 
 
+
 # ---------- SEARCH BAR ----------
 st.title("🔍 Search the Book Database")
 search_query = st.text_input("Search for a book by title, author, or subject:")
